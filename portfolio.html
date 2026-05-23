@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio — Creative & Layout Artist</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --surface2: #181818;
+    --accent: #FF5C00;
+    --accent2: #FFB800;
+    --text: #F0EDE8;
+    --muted: #7A7672;
+    --border: rgba(240,237,232,0.08);
+    --bebas: 'Bebas Neue', sans-serif;
+    --body: 'DM Sans', sans-serif;
+    --mono: 'DM Mono', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body);
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    position: fixed;
+    width: 10px; height: 10px;
+    background: var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s, width 0.2s, height 0.2s, background 0.2s;
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 36px; height: 36px;
+    border: 1px solid rgba(255,92,0,0.5);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: transform 0.18s ease-out, width 0.3s, height 0.3s, opacity 0.2s;
+  }
+  body:has(a:hover) .cursor, body:has(button:hover) .cursor { width: 18px; height: 18px; background: var(--accent2); }
+  body:has(a:hover) .cursor-ring, body:has(button:hover) .cursor-ring { width: 52px; height: 52px; opacity: 0.4; }
+
+  /* Nav */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.25rem 2.5rem;
+    border-bottom: 1px solid var(--border);
+    background: rgba(10,10,10,0.85);
+    backdrop-filter: blur(12px);
+  }
+  .nav-logo {
+    font-family: var(--bebas);
+    font-size: 1.6rem;
+    letter-spacing: 0.04em;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a {
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+  .nav-cta {
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--bg);
+    background: var(--accent);
+    padding: 0.55rem 1.25rem;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .nav-cta:hover { background: var(--accent2); transform: translateY(-1px); }
+
+  /* Hero */
+  #hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 0 2.5rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-bg-text {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: var(--bebas);
+    font-size: clamp(140px, 22vw, 320px);
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(255,92,0,0.07);
+    white-space: nowrap;
+    pointer-events: none;
+    user-select: none;
+    letter-spacing: 0.02em;
+    line-height: 1;
+  }
+  .hero-label {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.25rem;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.2s forwards;
+  }
+  .hero-label::before { content: '[ '; } .hero-label::after { content: ' ]'; }
+  h1.hero-name {
+    font-family: var(--bebas);
+    font-size: clamp(72px, 13vw, 190px);
+    line-height: 0.9;
+    letter-spacing: -0.01em;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.35s forwards;
+  }
+  h1.hero-name em { color: var(--accent); font-style: normal; }
+  .hero-tagline {
+    font-size: clamp(1rem, 2vw, 1.3rem);
+    font-weight: 300;
+    color: var(--muted);
+    max-width: 520px;
+    margin-top: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.55s forwards;
+  }
+  .hero-bottom {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    margin-top: 3rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.75s forwards;
+  }
+  .hero-ctas { display: flex; gap: 1rem; align-items: center; }
+  .btn-primary {
+    display: inline-block;
+    padding: 0.85rem 2rem;
+    background: var(--accent);
+    color: var(--bg);
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .btn-primary:hover { background: var(--accent2); transform: translateY(-2px); }
+  .btn-outline {
+    display: inline-block;
+    padding: 0.85rem 2rem;
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: border-color 0.2s, transform 0.15s;
+  }
+  .btn-outline:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .hero-scroll {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    writing-mode: vertical-rl;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .hero-scroll::after {
+    content: '';
+    display: block;
+    width: 1px; height: 48px;
+    background: var(--accent);
+    animation: scrollLine 1.5s ease-in-out infinite;
+  }
+  @keyframes scrollLine { 0%,100%{opacity:1;transform:scaleY(1)} 50%{opacity:0.3;transform:scaleY(0.4)} }
+  .hero-divider {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 1px; background: var(--border);
+  }
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 0.45rem 1rem;
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.1s forwards;
+  }
+  .status-dot { width: 7px; height: 7px; border-radius: 50%; background: #22c55e; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  /* Section base */
+  section { padding: 6rem 2.5rem; }
+  .section-label {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+  }
+  .section-label::before { content: '— '; }
+  h2.section-title {
+    font-family: var(--bebas);
+    font-size: clamp(48px, 7vw, 90px);
+    line-height: 0.95;
+    margin-bottom: 3rem;
+    letter-spacing: 0.02em;
+  }
+  h2.section-title em { color: var(--accent); font-style: normal; }
+
+  /* About */
+  #about { border-top: 1px solid var(--border); }
+  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+  .about-body { font-size: 1.05rem; font-weight: 300; line-height: 1.85; color: rgba(240,237,232,0.75); }
+  .about-body p + p { margin-top: 1.25rem; }
+  .about-body strong { color: var(--text); font-weight: 500; }
+  .roles-list { margin-top: 2.5rem; display: flex; flex-direction: column; gap: 0; }
+  .role-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.9rem;
+  }
+  .role-item:first-child { border-top: 1px solid var(--border); }
+  .role-name { font-weight: 500; }
+  .role-org { font-family: var(--mono); font-size: 0.72rem; color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase; }
+  .about-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); }
+  .stat-box { background: var(--surface); padding: 2rem 1.5rem; }
+  .stat-num { font-family: var(--bebas); font-size: 3.5rem; color: var(--accent); line-height: 1; letter-spacing: 0.02em; }
+  .stat-label { font-size: 0.78rem; color: var(--muted); margin-top: 0.5rem; letter-spacing: 0.06em; text-transform: uppercase; }
+
+  /* Skills */
+  #skills { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1px; background: var(--border); }
+  .skill-card {
+    background: var(--bg);
+    padding: 2rem 1.75rem;
+    transition: background 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .skill-card::before {
+    content: '';
+    position: absolute; bottom: 0; left: 0;
+    height: 2px; width: 0;
+    background: var(--accent);
+    transition: width 0.4s ease;
+  }
+  .skill-card:hover { background: var(--surface2); }
+  .skill-card:hover::before { width: 100%; }
+  .skill-icon { font-size: 1.5rem; margin-bottom: 1rem; }
+  .skill-name { font-family: var(--bebas); font-size: 1.5rem; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+  .skill-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.6; }
+  .skill-level {
+    display: inline-block;
+    margin-top: 1rem;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: rgba(255,92,0,0.08);
+    padding: 0.3rem 0.75rem;
+  }
+
+  /* Services */
+  #services { border-top: 1px solid var(--border); }
+  .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1px; background: var(--border); margin-top: 0; }
+  .service-card {
+    background: var(--surface);
+    padding: 2.5rem 2rem;
+    border: 1px solid transparent;
+    transition: border-color 0.25s, background 0.25s;
+  }
+  .service-card:hover { border-color: var(--accent); background: var(--surface2); }
+  .service-num { font-family: var(--bebas); font-size: 3rem; color: rgba(255,92,0,0.15); line-height: 1; margin-bottom: 1rem; }
+  .service-name { font-family: var(--bebas); font-size: 1.8rem; letter-spacing: 0.04em; margin-bottom: 0.75rem; }
+  .service-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.7; }
+  .service-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 1.25rem; }
+  .tag {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 0.25rem 0.6rem;
+  }
+
+  /* Works (projects) */
+  #works { background: var(--surface); border-top: 1px solid var(--border); }
+  .works-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 3rem; }
+  .works-grid { display: flex; flex-direction: column; gap: 1.5rem; background: transparent; }
+  .work-card { background: var(--bg); overflow: hidden; position: relative; width: 100%; height: 400px; display: flex; flex-direction: column; justify-content: flex-end; }
+  .work-card.featured { width: 100%; height: 400px; }
+  .work-bg {
+  position: absolute; inset: 0;
+  transition: transform 0.5s ease;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+  .work-card:hover .work-bg { transform: scale(1.04); }
+  .work-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.1) 60%);
+  }
+  .work-info { position: relative; z-index: 2; padding: 1.5rem; }
+  .work-type { font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.4rem; }
+  .work-title { font-family: var(--bebas); font-size: 1.4rem; letter-spacing: 0.04em; }
+
+  /* Placeholder work visuals */
+  .wv1 {
+    background: linear-gradient(135deg, #1a0a00 0%, #3d1800 50%, #ff5c0015 100%); 
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    }
+  .wv2 { 
+    background: linear-gradient(135deg, #001020 0%, #00213d 50%, #0066cc15 100%); 
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .wv3 {
+    background: linear-gradient(135deg, #0a1a00 0%, #1a3d00 50%, #33cc0015 100%); 
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .wv4 { 
+    background: linear-gradient(225deg, #1a001a 0%, #3d003d 50%, #cc33ff15 100%); 
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .wv5 { 
+    background: linear-gradient(135deg, #1a0a00 0%, #3d1800 100%); 
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .placeholder-art {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--bebas);
+    font-size: 5rem;
+    color: rgba(255,255,255,0.04);
+    letter-spacing: 0.1em;
+  }
+
+  /* Contact */
+  #contact { border-top: 1px solid var(--border); }
+  .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
+  .contact-body { font-size: 1rem; font-weight: 300; color: var(--muted); line-height: 1.85; }
+  .contact-links { margin-top: 2rem; display: flex; flex-direction: column; gap: 0; }
+  .contact-link {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.1rem 0;
+    border-bottom: 1px solid var(--border);
+    text-decoration: none;
+    color: var(--text);
+    font-size: 0.9rem;
+    transition: color 0.2s;
+  }
+  .contact-link:first-child { border-top: 1px solid var(--border); }
+  .contact-link:hover { color: var(--accent); }
+  .contact-link-arrow { font-size: 1.2rem; transition: transform 0.2s; }
+  .contact-link:hover .contact-link-arrow { transform: translate(4px,-4px); }
+  .contact-form { display: flex; flex-direction: column; gap: 1rem; }
+  .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+  .form-label { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+  .form-input, .form-textarea {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--body);
+    font-size: 0.9rem;
+    padding: 0.85rem 1rem;
+    transition: border-color 0.2s;
+    resize: none;
+    outline: none;
+  }
+  .form-input:focus, .form-textarea:focus { border-color: var(--accent); }
+  .form-textarea { min-height: 120px; }
+  .form-submit {
+    align-self: flex-start;
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    padding: 0.9rem 2rem;
+    font-family: var(--body);
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: none;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .form-submit:hover { background: var(--accent2); transform: translateY(-2px); }
+
+  /* Footer */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem 2.5rem;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .footer-logo { font-family: var(--bebas); font-size: 1.2rem; color: var(--muted); letter-spacing: 0.06em; }
+  .footer-logo span { color: var(--accent); }
+  .footer-copy { font-family: var(--mono); font-size: 0.68rem; color: var(--muted); letter-spacing: 0.08em; }
+
+  /* Animations */
+  @keyframes fadeUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+  .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.25rem; }
+    .nav-links { display: none; }
+    section { padding: 4rem 1.25rem; }
+    #hero { padding: 0 1.25rem 3rem; }
+    .about-grid, .contact-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+    .works-grid { grid-template-columns: 1fr; }
+    .work-card.featured { grid-column: span 1; }
+    .hero-bottom { flex-direction: column; align-items: flex-start; gap: 2rem; }
+    footer { flex-direction: column; gap: 1rem; text-align: center; }
+  }
+
+  .pub {
+  position: absolute;
+  inset: 0;
+  opacity: 0.5;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+
+  .pub img {
+  margin: 5px;
+  border-radius: 5px;
+}
+
+.notA {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 50px;
+  font-family: var(--bebas);
+  background-color: rgba(0, 0, 0, 0.379);
+  color: var(--text);
+  letter-spacing: 0.08em;
+  text-align: center;
+  padding: 1rem;
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursor-ring"></div>
+
+<nav>
+  <a href="#hero" class="nav-logo">C<span>.</span>R<span>.</span>Z</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#works">Works</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="https://www.facebook.com/scret.po.2025" class="nav-cta">Hire Me</a>
+</nav>
+
+<section id="hero">
+  <div class="hero-bg-text">C.R.Z</div>
+  <div class="status-pill"><span class="status-dot"></span> Open for commissions</div>
+  <div class="hero-label">Layout Artist & Motion Designer</div>
+  <h1 class="hero-name">Creative<br><em>by Design</em></h1>
+  <p class="hero-tagline">I turn ideas into visuals — from school pubmats and brand logos to 3D animations and video graphics. Art, made with technology.</p>
+  <div class="hero-bottom">
+    <div class="hero-ctas">
+      <a href="#works" class="btn-primary">View My Work</a>
+      <a href="#contact" class="btn-outline">Start a Project</a>
+    </div>
+    <div class="hero-scroll">Scroll</div>
+  </div>
+  <div class="hero-divider"></div>
+</section>
+
+<section id="about">
+  <div class="section-label">About Me</div>
+  <div class="about-grid">
+    <div>
+      <h2 class="section-title reveal">WHO<br>I <em>AM</em></h2>
+      <div class="about-body reveal">
+        <p>I'm a freshly graduated high school student with a deep passion for <strong>art powered by technology</strong>. From designing school publications to crafting 3D animations, I've spent my academic years building a creative skill set that blends aesthetics with technical precision.</p>
+        <p>As the <strong>Layout Artist</strong> of my school and <strong>Technical Director</strong> in the TV Broadcasting & Journalism organization, I've led visual production for events, publications, and broadcasts — always pushing the quality bar higher.</p>
+        <p>I take <strong>commissions</strong> for layout work and video graphics, working closely with colleagues and seniors to bring their visions to life. I'm flexible, fast, and fully committed to delivering exactly what my clients need.</p>
+      </div>
+      <div class="roles-list reveal">
+        <div class="role-item">
+          <span class="role-name">Layout Artist</span>
+          <span class="role-org">School Publication</span>
+        </div>
+        <div class="role-item">
+          <span class="role-name">Technical Director</span>
+          <span class="role-org">TV Broadcasting & Journalism</span>
+        </div>
+        <div class="role-item">
+          <span class="role-name">Commission Artist</span>
+          <span class="role-org">Freelance · Layout & Video</span>
+        </div>
+      </div>
+    </div>
+    <div class="reveal">
+      <div class="about-stats">
+        <div class="stat-box">
+          <div class="stat-num">4+</div>
+          <div class="stat-label">Years of creative work</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">4</div>
+          <div class="stat-label">Pro tools mastered</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">∞</div>
+          <div class="stat-label">Flexibility for clients</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">100%</div>
+          <div class="stat-label">Passion for the craft</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="section-label">Tools & Expertise</div>
+  <h2 class="section-title reveal">MY<br><em>TOOLKIT</em></h2>
+  <div class="skills-grid reveal">
+    <div class="skill-card">
+      <div class="skill-icon">🎨</div>
+      <div class="skill-name">Adobe Illustrator</div>
+      <div class="skill-desc">Vector design, logos, pubmats, shirt layouts, and brand identity pieces with precision and scalability.</div>
+      <span class="skill-level">Efficient</span>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon">🖼️</div>
+      <div class="skill-name">Adobe Photoshop</div>
+      <div class="skill-desc">Photo manipulation, digital painting, compositing, and print-ready layout design for all occasions.</div>
+      <span class="skill-level">Efficient</span>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon">🧊</div>
+      <div class="skill-name">Blender</div>
+      <div class="skill-desc">3D modelling, texturing, rigging, and animation for eye-catching motion and render sequences.</div>
+      <span class="skill-level">Efficient</span>
+    </div>
+    <div class="skill-card">
+      <div class="skill-icon">🎬</div>
+      <div class="skill-name">After Effects</div>
+      <div class="skill-desc">Motion graphics, video compositing, title sequences, and dynamic broadcast visuals for every screen.</div>
+      <span class="skill-level">Efficient</span>
+    </div>
+  </div>
+</section>
+
+<section id="services">
+  <div class="section-label">What I Offer</div>
+  <h2 class="section-title reveal">SERVICES<br>& <em>WORK</em></h2>
+  <div class="services-grid reveal">
+    <div class="service-card">
+      <div class="service-num">01</div>
+      <div class="service-name">Layout Design</div>
+      <div class="service-desc">Publication layouts, school pubmats, event posters, and print-ready materials crafted with visual clarity and impact.</div>
+      <div class="service-tags"><span class="tag">Pubmats</span><span class="tag">Posters</span><span class="tag">Print</span></div>
+    </div>
+    <div class="service-card">
+      <div class="service-num">02</div>
+      <div class="service-name">Shirt & Merch Design</div>
+      <div class="service-desc">Custom shirt layouts, uniform graphics, and wearable art for organizations, events, and intramurals.</div>
+      <div class="service-tags"><span class="tag">Shirt Layouts</span><span class="tag">Merch</span><span class="tag">Uniforms</span></div>
+    </div>
+    <div class="service-card">
+      <div class="service-num">03</div>
+      <div class="service-name">Logo & Identity</div>
+      <div class="service-desc">Event logos, organization marks, and intrams branding designed with symbolism and style in mind.</div>
+      <div class="service-tags"><span class="tag">Logo</span><span class="tag">Branding</span><span class="tag">Intrams</span></div>
+    </div>
+    <div class="service-card">
+      <div class="service-num">04</div>
+      <div class="service-name">3D Animation</div>
+      <div class="service-desc">3D renders and animated sequences built in Blender — product visualization, motion art, and creative projects.</div>
+      <div class="service-tags"><span class="tag">Blender</span><span class="tag">3D Render</span><span class="tag">Animation</span></div>
+    </div>
+    <div class="service-card">
+      <div class="service-num">05</div>
+      <div class="service-name">Video Graphics</div>
+      <div class="service-desc">Motion graphics, broadcast visuals, title cards, and video overlays for your content, shows, or events.</div>
+      <div class="service-tags"><span class="tag">After Effects</span><span class="tag">Motion Graphics</span></div>
+    </div>
+    <div class="service-card">
+      <div class="service-num">06</div>
+      <div class="service-name">Digital Art</div>
+      <div class="service-desc">Custom digital illustrations and artwork tailored to your vision — flexible in style and fully client-driven.</div>
+      <div class="service-tags"><span class="tag">Illustration</span><span class="tag">Digital Painting</span><span class="tag">Custom</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="works">
+  <div class="works-header">
+    <div>
+      <div class="section-label">Selected Work</div>
+      <h2 class="section-title" style="margin-bottom:0;">FEATURED<br><em>PROJECTS</em></h2>
+    </div>
+    <p style="font-size:0.82rem;color:var(--muted);max-width:200px;text-align:right;line-height:1.7;"></p>
+  </div>
+
+<a href="pubmats.html" style="color:white; display:contents;">
+  <div class="works-grid reveal">
+    <div class="work-card featured">
+      <div class="work-bg">
+        <div class="wv1">
+        <div class="pub">
+          <img src="/images/2 days left.png" height="200" alt="sample 1" title="2 days left pubmat">
+          <img src="/images/2ds.png" height="200" alt="sample 2" title="2 days left christmas pubmat">
+          <img src="/images/3 days left 1.png" height="200" alt="sample 3" title="3 days left pubmat">
+          <img src="/images/3d.png" height="200" alt="sample 4" title="3 days left christmas pubmat">
+          <img src="/images/back to school.png" height="200" alt="sample 5" title="back to school pubmat">
+          <img src="/images/congrats athletes.png" height="200" alt="sample 6" title="athletes pubmat">
+          <img src="/images/Copy of 2nd exam.png" height="200" alt="sample 7" title="2 quarter examinations pubmat">
+          <img src="/images/Copy of immaculate conce.png" height="200" alt="sample 8" title="immaculate conception pubmat">
+          <img src="/images/nov long exam.png" height="200" alt="sample 9" title="nov exam pubmat">
+          <img src="/images/splash and dash.png" height="200" alt="sample 10" title="splash and dash pubmat">
+        </div> 
+          <div class="placeholder-art">PUBMAT</div></div>
+      </div>
+      <div class="work-overlay"></div>
+      <div class="work-info">
+        <div class="work-type">Layout Design · Illustrator</div>
+        <div class="work-title">School Event Pubmat</div>
+      </div>
+    </div>
+    </a>
+    
+   <a href="https://drive.google.com/drive/folders/1afDKqb2ohey5c6zZ6uETT2e2yujI3vfp?usp=drive_link" style="color:white; display:contents;">
+    <div class="work-card">
+      <div class="work-bg">
+        <div class="wv2">
+        <div class="pub">
+          <img src="/vid/v1.png" height="150" alt="sample 1">
+          <img src="/vid/v2.png" height="150" alt="sample 2">
+          <img src="/vid/v3.png" height="150" alt="sample 3">
+          <img src="/vid/v4.png" height="150" alt="sample 4">
+          <img src="/vid/v5.png" height="150" alt="sample 5">
+          <img src="/vid/v6.png" height="150" alt="sample 6">
+        </div>
+        <div class="placeholder-art">3D</div></div></div>
+      <div class="work-overlay"></div>
+      <div class="work-info">
+        <div class="work-type">3D Animation · Video Graphics</div>
+        <div class="work-title">After Effects . Blender</div>
+      </div>
+    </div>
+  </a>
+
+    <a href="logo.html" style="color:white; display:contents;">
+    <div class="work-card">
+      <div class="work-bg">
+        <div class="wv3">
+          <div class="pub">
+          <img src="/images/7.png" height="200" alt="sample 1" title="grade 7 logo">
+          <img src="/images/9.png" height="200" alt="sample 2" title="grade 9 logo">
+          <img src="/images/10.png" height="200" alt="sample 3" title="grade 10 logo">
+          <img src="/images/11.png" height="200" alt="sample 4" title="grade 11 logo">           
+        </div>
+          <div class="placeholder-art">LOGO</div></div></div>
+      <div class="work-overlay"></div>
+      <div class="work-info">
+        <div class="work-type">Logo Design · Illustrator</div>
+        <div class="work-title">Intrams Logo</div>
+      </div>
+    </div>
+    </a>
+
+    <a href="digi.html" style="color:white; display:contents;">
+    <div class="work-card">
+      <div class="work-bg">
+        <div class="wv4">
+          <div class="notA">NOT AVAILABLE FOR NOW</div>
+        <div class="pub">
+          <img src="/images/IMG_2910.JPG" height="200">
+          <img src="/images/IMG_2911.JPG" height="200">
+          <img src="/images/IMG_2912.JPG" height="200">
+          <img src="/images/princia.png" height="200">           
+        </div>
+          <div class="placeholder-art">DIGI ART</div></div></div>
+      <div class="work-overlay"></div>
+      <div class="work-info">
+        <div class="work-type">ILLUSTRATION · MEDIBANG PAINT</div>
+        <div class="work-title">DIGITAL ART</div>
+      </div>
+    </div>
+  </a>
+
+    <a href="shirt.html" style="color: #fff; display: contents;">
+    <div class="work-card featured">
+      <div class="work-bg">
+        <div class="wv5">
+          <div class="pub">
+            <img src="/images/Copy of eng.png" height="200" alt="sample 1" title="ENGLISH CLUB SHIRT">
+            <img src="/images/Copy of thea.png" height="200" alt="sample 2" title="THEATRE CLUB SHIRT">
+            <img src="/images/Copy of vao.png" height="200" alt="sample 3" title="VAO CLUB SHIRT">
+            <img src="/images/gd chinese collar.png" height="200" alt="sample 4" title="GD SHIRT">
+            <img src="/images/Copy of ssl shirt.png" height="200" alt="sample 5" title="SSL UNIFORM">
+            <img src="/images/vanguard shirt.png" height="200" alt="sample 6" title="VANGUARD UNIFORM">
+            <img src="/images/merch 1.png" height="200" alt="sample 7" title="WARMER MERCH">
+            <img src="/images/Copy of andrew jersey.png" height="200" alt="sample 8" title="ANDREW JERSEY">
+          </div>
+        <div class="placeholder-art">SHIRT</div></div></div>
+      <div class="work-overlay"></div>
+      <div class="work-info">
+        <div class="work-type">Shirt Layout · Illustrator + Photoshop</div>
+        <div class="work-title">Event Shirt Design</div>
+      </div>
+      </div>
+      </div>
+    </a>
+</section>
+
+<section id="contact">
+  <div class="section-label">Get In Touch</div>
+  <div class="contact-grid">
+    <div>
+      <h2 class="section-title reveal">LET'S<br><em>WORK.</em></h2>
+      <p class="contact-body reveal">Got a project in mind? Whether it's a school pubmat, a shirt layout, a logo, a 3D animation, or something totally custom — I'm open for commissions and ready to make it happen.</p>
+      <div class="contact-links reveal">
+        <a href="mailto:carmellyncabeguin@email.com" class="contact-link">
+          <span>carmellyncabeguin@email.com</span>
+          <span class="contact-link-arrow">↗</span>
+        </a>
+        <a href="https://www.facebook.com/scret.po.2025" target="_blank" class="contact-link">
+          <span>Carm Cabeguin</span>
+          <span class="contact-link-arrow">↗</span>
+        </a>
+        <a href="https://www.instagram.com/karek.metikz?igsh=MWk5c2loZXk5b3V3aQ==" target="_blank" class="contact-link">
+          <span>Instagram · @karek.metikz</span>
+          <span class="contact-link-arrow">↗</span>
+        </a>
+      </div>
+    </div>
+    <div class="reveal">
+      <div class="contact-form">
+        <div class="form-group">
+          <label class="form-label">Your Name</label>
+          <input type="text" class="form-input" placeholder="Your name here">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Your Email or Messenger</label>
+          <input type="text" class="form-input" placeholder="@email.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">What do you need?</label>
+          <textarea class="form-textarea" placeholder="Tell me about your project — what is it for, deadline, and any references you have in mind."></textarea>
+        </div>
+        <button class="form-submit" onclick="alert('Message sent! (Connect this to a form service like Formspree to make it functional.)')">Send Message →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">C<span>.</span>ARTE</div>
+  <div class="footer-copy">© 2025 · Crafted with passion & Adobe CC</div>
+</footer>
+
+<script>
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let mx=0, my=0, rx=0, ry=0;
+  document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; cursor.style.left=mx+'px'; cursor.style.top=my+'px'; });
+  function animRing(){ rx+=(mx-rx)*0.12; ry+=(my-ry)*0.12; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(animRing); }
+  animRing();
+
+  const reveals = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => obs.observe(el));
+</script>
+</body>
+</html>

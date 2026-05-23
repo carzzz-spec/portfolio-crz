@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pubmats</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --surface2: #181818;
+    --accent: #FF5C00;
+    --accent2: #FFB800;
+    --text: #F0EDE8;
+    --muted: #7A7672;
+    --border: rgba(240,237,232,0.08);
+    --bebas: 'Bebas Neue', sans-serif;
+    --body: 'DM Sans', sans-serif;
+    --mono: 'DM Mono', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+    
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--body);
+            font-size: 16px;
+            line-height: 1.6;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        .cursor {
+            position: fixed;
+            width: 10px; height: 10px;
+            background: var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s, width 0.2s, height 0.2s, background 0.2s;
+        }
+        .cursor-ring {
+            position: fixed;
+            width: 36px; height: 36px;
+            border: 1px solid rgba(255,92,0,0.5);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            transform: translate(-50%, -50%);
+            transition: transform 0.18s ease-out, width 0.3s, height 0.3s, opacity 0.2s;
+        }
+body:has(a:hover) .cursor, body:has(button:hover) .cursor { width: 18px; height: 18px; background: var(--accent2); }
+body:has(a:hover) .cursor-ring, body:has(button:hover) .cursor-ring { width: 52px; height: 52px; opacity: 0.4; }
+
+
+        div {
+            display: flex;
+            justify-content: center;
+            align-items: justify;
+            flex-wrap: wrap;
+        }
+    div img {
+            border: 1px solid #ffffff7c;
+            border-radius: 13px;
+            box-shadow: 4px 7px 7px #191818c4;
+            margin: 10px;
+            transition: 400ms;
+        }
+     div img:hover {
+            filter: grayscale(1);
+            transform: scale(1.03);
+     }
+
+     hr.solid{
+        border: 1px solid #ffffff3d;
+     }
+
+          div button{
+        display: flex;
+        justify-content: center;
+        align-items: justify;
+        flex-wrap: wrap;
+        background-color: #181818;
+        color: #F0EDE8;
+        font-family: var(--bebas);
+        font-size: 20px;
+        padding: 10px 20px 10px 20px;
+        border-radius: 10px;
+        margin: 20px;
+        transition: 400ms;
+     }
+
+     button:hover{
+        transform: scale(1.03);
+     }
+
+    </style>
+</head>
+
+<body>
+<h1 style="text-align: center; font-size: 50px;">
+    DIGITAL ART
+</h1>
+<hr>
+<br>
+    <div id="cursor" class="cursor"></div>
+    <div id="cursor-ring" class="cursor-ring"></div>
+
+    <div>
+        <img src="/images/IMG_2910.JPG" height="200">
+          <img src="/images/IMG_2911.JPG" height="200">
+          <img src="/images/IMG_2912.JPG" height="200">
+          <img src="/images/princia.png" height="200">
+    </div>
+
+    <div>
+        <a href="portfolio.html">
+        <button>HOME</button>
+        </a>
+    </div>
+
+    <script>
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let mx=0, my=0, rx=0, ry=0;
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+  });
+  function animRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animRing);
+  }
+  animRing();
+</script>
+</body>
+
+</html>
